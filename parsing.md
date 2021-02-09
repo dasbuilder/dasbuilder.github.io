@@ -1,0 +1,57 @@
+
+***
+WP Engine has a must-use plugin called [Security Auditor](https://wpengine.com/support/troubleshoot-wordpress-wp-engine-error-log/#Security_Auditor) which logs certain activities to a site's error logs. While it can muddy up your logs, it's a great resource, but they only keep the logs for 5 days, so download them from within your WordPress site by looking for the WP Engine logo, and clicking "General Settings". 
+Once on this page, look for "Web Server & PHP Error Log" (which is usually towards the bottom) and ensure you click the links that say "Live Site" to download your files. This is the last two days, but you can easily script if you know what you're doing. 
+
+I'm not posting the link here since it has an API key, and I don't recommend you publicly post the link either. 
+Alternatively, you can set up an Amazon S3 bucket to store your logs - [read here](https://wpengine.com/support/configuring-largefs-store-transfer-unlimited-data/#Backup_Logs_to_Amazon_S3) for setting that up. 
+
+Okay, now that you have your logs in front of you, let's get to the meat and potatoes. In the You also may not need zgrep if your logs are not compressed by the gzip program. If that's the case, change zgrep to grep (ggrep if on Mac using Homebrew if you haven't set your alias). 
+
+The following script prints the user's email, time and date as well as the plugin that was updated. In order for the user's email to print, you must have wp-cli installed for this to work. If you don't, the function will print out the user ID instead. 
+
+**Usage: `printupdates logfile`**
+
+Replace **`logfile`** with the path to your log file
+   e.g. `/var/log/apache2/site.error.log`
+
+### Function to print which user made updates in WordPress
+
+```
+function printupdates(){
+    getlog=$(zgrep -vh 'scan' "${1}" | grep 'auditor.*plugin');
+    if [[ -z "${getlog}" ]]; then 
+        printf "%s\n" "No data found. Exiting."; 
+        return 1;
+    else
+        if [[ $(which wp) ]]; then 
+            printf "%s\n" "${getlog}" | awk 'BEGIN{a[$2];a[$3];a[$4]}{for (x in a)
+            date=gensub(/.*([A-Z][a-z]{2}) ([0-9]{2}).([0-9]{2}):([0-9]{2}):([0-9]{2}).*$/, "\\1 \\2 \\3:\\4", "g", $x);
+            plugin=gensub(/.*plugin\":\"(.*)\/.+\.php.*/, "\\1", "g", $12);
+            getuser=gensub(/.*current_user_id\":([0-9]+).*/, "\\1", "g", $12);
+            cmd = "wp user get " getuser " --field=user_email 2>/dev/null"
+            cmd | getline getuser
+                printf "\nDate/Time: %s\tUser: %s\nPlugin: %s\n\n",
+                date, getuser, plugin
+            close(cmd)
+            }'
+        else
+            printf "wp-cli not found. Double check if wp-cli is installed. Printing user ID instead.\n" &&
+            printf "%s\n" "${getlog}" | awk 'BEGIN{a[$2];a[$3];a[$4]}{for (x in a)
+            date=gensub(/.*([A-Z][a-z]{2}) ([0-9]{2}).([0-9]{2}):([0-9]{2}):([0-9]{2}).*$/, "\\1 \\2 \\3:\\4", "g", $x);
+            plugin=gensub(/.*plugin\":\"(.*)\/.+\.php.*/, "\\1", "g", $12);
+            getuser=gensub(/.*current_user_id\":([0-9]+).*/, "\\1", "g", $12);
+            printf "\nDate/Time: %s\tUser: %s\nPlugin: %s\n\n", date, getuser, plugin
+            }'
+        fi
+   fi
+}
+
+User: myemail@myemail.com
+Date/Time: Feb 05 20:32
+Plugin: myplugin
+
+User: myemail@myemail.com
+Date/Time: Feb 05 20:32
+Plugin: my-next-plugin
+```

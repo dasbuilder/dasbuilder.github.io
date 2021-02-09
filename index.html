@@ -1,4 +1,7 @@
-
+<html>
+<head><title>Parsing WP Engine Security Auditor Information from Your Error Logs</title></head>
+<body>
+<p>
 ***
 WP Engine has a must-use plugin called [Security Auditor](https://wpengine.com/support/troubleshoot-wordpress-wp-engine-error-log/#Security_Auditor) which logs certain activities to a site's error logs. While it can muddy up your logs, it's a great resource, but they only keep the logs for 5 days, so download them from within your WordPress site by looking for the WP Engine logo, and clicking "General Settings". 
 Once on this page, look for "Web Server & PHP Error Log" (which is usually towards the bottom) and ensure you click the links that say "Live Site" to download your files. This is the last two days, but you can easily script if you know what you're doing. 
@@ -10,12 +13,12 @@ Okay, now that you have your logs in front of you, let's get to the meat and pot
 
 The following script prints the user's email, time and date as well as the plugin that was updated. In order for the user's email to print, you must have wp-cli installed for this to work. If you don't, the function will print out the user ID instead. 
 
-**Usage: `printupdates logfile`**
+<b>Usage: `printupdates logfile`</b>
 
 Replace **`logfile`** with the path to your log file
    e.g. `/var/log/apache2/site.error.log`
 
-### Function to print which user made updates in WordPress
+<h3> Function to print which user made updates in WordPress
 
 ```
 function printupdates(){
@@ -55,3 +58,6 @@ User: myemail@myemail.com
 Date/Time: Feb 05 20:32
 Plugin: my-next-plugin
 ```
+</p>
+</body>
+</html>

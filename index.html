@@ -1,9 +1,19 @@
 <html>
 <head><title>Parsing WP Engine Security Auditor Information from Your Error Logs</title></head>
+<style>
+pre code {
+  background-color: #eee;
+  border: 1px solid #999;
+  display: block;
+  padding: 20px;
+}
+</style>
 <body>
 <p>
-***
-WP Engine has a must-use plugin called [Security Auditor](https://wpengine.com/support/troubleshoot-wordpress-wp-engine-error-log/#Security_Auditor) which logs certain activities to a site's error logs. While it can muddy up your logs, it's a great resource, but they only keep the logs for 5 days, so download them from within your WordPress site by looking for the WP Engine logo, and clicking "General Settings". 
+
+WP Engine has a must-use plugin called <a href="https://wpengine.com/support/troubleshoot-wordpress-wp-engine-error-log/#Security_Auditor">Security Auditor</a> which logs certain activities to a site's error logs. 
+While it can muddy up your logs, it's a great resource, but they only keep the logs for 5 days, so download them from within your WordPress site by looking for the WP Engine logo, and clicking "General Settings". 
+<br>
 Once on this page, look for "Web Server & PHP Error Log" (which is usually towards the bottom) and ensure you click the links that say "Live Site" to download your files. This is the last two days, but you can easily script if you know what you're doing. 
 
 I'm not posting the link here since it has an API key, and I don't recommend you publicly post the link either. 
@@ -20,7 +30,8 @@ Replace **`logfile`** with the path to your log file
 
 <h3> Function to print which user made updates in WordPress
 
-```
+<pre>
+<code>
 function printupdates(){
     getlog=$(zgrep -vh 'scan' "${1}" | grep 'auditor.*plugin');
     if [[ -z "${getlog}" ]]; then 
@@ -58,6 +69,7 @@ User: myemail@myemail.com
 Date/Time: Feb 05 20:32
 Plugin: my-next-plugin
 ```
-</p>
+</code>
+</pre>
 </body>
 </html>

@@ -1,37 +1,39 @@
 <html>
-<head><title>Parsing WP Engine Security Auditor Information from Your Error Logs</title></head>
-<style>
+  <head>
+    <title>Parsing WP Engine Security Auditor Information from Your Error Logs</title>
+  </head>
+  <style>
 pre code {
   background-color: #eee;
   border: 1px solid #999;
   display: block;
   padding: 20px;
 }
-</style>
-<body>
-<p>
+  </style>
+  <body>
+    <p>
 
 WP Engine has a must-use plugin called <a href="https://wpengine.com/support/troubleshoot-wordpress-wp-engine-error-log/#Security_Auditor">Security Auditor</a> which logs certain activities to a site's error logs. 
 While it can muddy up your logs, it's a great resource, but they only keep the logs for 5 days, so download them from within your WordPress site by looking for the WP Engine logo, and clicking "General Settings". 
-<br>
+<br><br>
 Once on this page, look for "Web Server & PHP Error Log" (which is usually towards the bottom) and ensure you click the links that say "Live Site" to download your files. This is the last two days, but you can easily script if you know what you're doing. 
 
 I'm not posting the link here since it has an API key, and I don't recommend you publicly post the link either. 
-Alternatively, you can set up an Amazon S3 bucket to store your logs - [read here](https://wpengine.com/support/configuring-largefs-store-transfer-unlimited-data/#Backup_Logs_to_Amazon_S3) for setting that up. 
+Alternatively, you can set up an Amazon S3 bucket to store your logs - [read here](https://wpengine.com/support/configuring-largefs-store-transfer-unlimited-data/#Backup_Logs_to_Amazon_S3) for setting that up. <br>
 
-Okay, now that you have your logs in front of you, let's get to the meat and potatoes. In the You also may not need zgrep if your logs are not compressed by the gzip program. If that's the case, change zgrep to grep (ggrep if on Mac using Homebrew if you haven't set your alias). 
+Okay, now that you have your logs in front of you, let's get to the meat and potatoes. In the You also may not need zgrep if your logs are not compressed by the gzip program. If that's the case, change zgrep to grep (ggrep if on Mac using Homebrew if you haven't set your alias). <br>
 
-The following script prints the user's email, time and date as well as the plugin that was updated. In order for the user's email to print, you must have wp-cli installed for this to work. If you don't, the function will print out the user ID instead. 
+The following script prints the user's email, time and date as well as the plugin that was updated. In order for the user's email to print, you must have wp-cli installed for this to work. If you don't, the function will print out the user ID instead. <br>
 
-<b>Usage: `printupdates logfile`</b>
+    <b>Usage: `printupdates logfile`</b><br>
 
-Replace **`logfile`** with the path to your log file
+Replace **`logfile`** with the path to your log file<br>
    e.g. `/var/log/apache2/site.error.log`
+    </p>
+    <h3> Function to print which user made updates in WordPress</h3>
 
-<h3> Function to print which user made updates in WordPress
-
-<pre>
-<code>
+    <pre>
+      <code>
 function printupdates(){
     getlog=$(zgrep -vh 'scan' "${1}" | grep 'auditor.*plugin');
     if [[ -z "${getlog}" ]]; then 
@@ -68,8 +70,7 @@ Plugin: myplugin
 User: myemail@myemail.com
 Date/Time: Feb 05 20:32
 Plugin: my-next-plugin
-```
-</code>
-</pre>
-</body>
+      </code>
+    </pre>
+  </body>
 </html>
